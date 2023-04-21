@@ -1,3 +1,9 @@
+# My ( bebrws ) changes
+
+I added a blacklist of processes NOT to inject into. There is a file, "/var/root/flexconfig.txt", that is line seperated.
+If the bundle identifier contains a string from a line in that file then it won't load.
+
+
 # FLEXing
 
 FLEXing is a basic tweak to activate the FLEX explorer via Activator or long pressing on the status bar (depending on your iOS version you will want to use the appropriate version from the releases tab).

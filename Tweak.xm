@@ -28,6 +28,30 @@ inline bool isLikelyUIProcess() {
         [executablePath hasSuffix:@"CoreServices/SpringBoard.app/SpringBoard"];
 }
 
+inline bool checkBundleIdentifierIsBlacklisted() {
+    NSLog(@"In checkBundleIdentifierIsBlacklisted for NSBundle.mainBundle.bundleIdentifier: %@", NSBundle.mainBundle.bundleIdentifier);
+    NSString *filePath = @"/var/root/flexconfig.txt";
+    NSError *error = nil;
+    NSString *fileContents = [NSString stringWithContentsOfFile:filePath
+                                                       encoding:NSUTF8StringEncoding
+                                                          error:&error];
+    if (error) {
+        NSLog(@"Error reading file: %@", error);
+        return false;
+    }
+    
+    NSArray *stringsArray = [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+    
+    for (NSString *string in stringsArray) {
+        NSLog(@"In checkBundleIdentifierIsBlacklisted blacklist: %@", string);
+        if ([NSBundle.mainBundle.bundleIdentifier containsString:string]) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 inline bool isSnapchatApp() {
     // See: near line 44 below
     return [NSBundle.mainBundle.bundleIdentifier isEqualToString:@"com.toyopagroup.picaboo"];
@@ -36,6 +60,8 @@ inline bool isSnapchatApp() {
 inline BOOL flexAlreadyLoaded() {
     return NSClassFromString(@"FLEXExplorerToolbar") != nil;
 } 
+
+// /var/root
 
 %ctor {
     NSString *standardPath = @"/Library/MobileSubstrate/DynamicLibraries/libFLEX.dylib";
@@ -70,7 +96,7 @@ inline BOOL flexAlreadyLoaded() {
     if (libflex) {
         // Hey Snapchat / Snap Inc devs,
         // This is so users don't get their accounts locked.
-        if (isLikelyUIProcess() && !isSnapchatApp()) {
+        if (isLikelyUIProcess() && !isSnapchatApp() && !checkBundleIdentifierIsBlacklisted()) {
             handle = dlopen(libflex.UTF8String, RTLD_LAZY);
             
             if (libreflex) {
