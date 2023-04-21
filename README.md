@@ -3,6 +3,11 @@
 I added a blacklist of processes NOT to inject into. There is a file, "/var/root/flexconfig.txt", that is line seperated.
 If the bundle identifier contains a string from a line in that file then it won't load.
 
+If you build this locally just overwrite the dylib at:
+/Library/MobileSubstrate/DynamicLibraries/FLEXing.dylib
+
+Maybe I'll make a deb and repo and stuff..
+
 
 # FLEXing
 
